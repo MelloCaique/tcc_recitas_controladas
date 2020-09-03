@@ -55,6 +55,27 @@ object IOUSchemaV1 : MappedSchema(
             @Column(name = "posologia") //Dosagem do medicamenento
             var posologia: Int,
 
+            @Column(name = "comprador")
+            var comprador: String? = null,
+
+            @Column(name = "endereco_comprador")
+            var endereco: String? = null,
+
+            @Column(name = "rg")
+            var rg: Int? = null,
+
+            @Column(name = "telefone")
+            var telefone: Int? = null,
+
+            @Column(name = "nome_vendedor")
+            var nome_vendedor: String? = null,
+
+            @Column(name = "cnpj")
+            var cnpj: Int? = null,
+
+            @Column(name = "data")
+            var data: String? = null,
+
             @Column(name = "linear_id")
             var linearId: UUID
 
@@ -72,6 +93,13 @@ object IOUSchemaV1 : MappedSchema(
                 "",
                 "",
                 0,
+                "",
+                "",
+                0,
+                0,
+                "",
+                0,
+                "",
                 UUID.randomUUID())
     }
 }

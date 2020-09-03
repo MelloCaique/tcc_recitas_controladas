@@ -1,7 +1,7 @@
 package com.example.state
 
 import com.example.contract.IOUContract
-import com.example.iou.MedicoIOU
+import com.example.iou.ReceitaIOU
 import com.example.schema.IOUSchemaV1
 import net.corda.core.contracts.BelongsToContract
 import net.corda.core.contracts.ContractState
@@ -23,8 +23,8 @@ import net.corda.core.schemas.QueryableState
  * @param borrower the party receiving and approving the IOU.
  */
 @BelongsToContract(IOUContract::class)
-data class IOUState( val iou: MedicoIOU,
-                     val remetente: Party,
+data class IOUState(val iou: ReceitaIOU,
+                    val remetente: Party,
                     override val linearId: UniqueIdentifier = UniqueIdentifier()):
         LinearState, QueryableState {
     /** The public keys of the involved parties. */
@@ -44,6 +44,13 @@ data class IOUState( val iou: MedicoIOU,
                     this.iou.receita.formulaMedicamento,
                     this.iou.receita.doseUnidade,
                     this.iou.receita.posologia,
+                    this.iou.receita.comprador,
+                    this.iou.receita.enderecoComprador,
+                    this.iou.receita.rg,
+                    this.iou.receita.telefone,
+                    this.iou.receita.nomeVendedor,
+                    this.iou.receita.cnpj,
+                    this.iou.receita.data,
                     this.linearId.id
             )
             else -> throw IllegalArgumentException("Unrecognised schema $schema")

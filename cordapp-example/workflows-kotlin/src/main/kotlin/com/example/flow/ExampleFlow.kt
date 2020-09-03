@@ -4,7 +4,7 @@ import co.paralleluniverse.fibers.Suspendable
 import com.example.contract.IOUContract
 import com.example.flow.ExampleFlow.Acceptor
 import com.example.flow.ExampleFlow.Initiator
-import com.example.iou.MedicoIOU
+import com.example.iou.ReceitaIOU
 import com.example.iou.Receita
 import com.example.state.IOUState
 import net.corda.core.contracts.Command
@@ -77,7 +77,7 @@ object ExampleFlow {
             progressTracker.currentStep = GENERATING_TRANSACTION
             // Generate an unsigned transaction.
             val iouState = IOUState(
-                    MedicoIOU(
+                    ReceitaIOU(
                          receita
                     ),
                     serviceHub.myInfo.legalIdentities.first()
