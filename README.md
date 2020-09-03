@@ -1,4 +1,4 @@
-# seguradora-reembolso
+# Controle de Receitas
 
 ### Campos e seus tipos
 - procedimento: Int
