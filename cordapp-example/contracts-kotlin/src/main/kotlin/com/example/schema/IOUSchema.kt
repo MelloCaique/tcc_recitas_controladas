@@ -22,9 +22,6 @@ object IOUSchemaV1 : MappedSchema(
     @Entity
     @Table(name = "iou_states")
     class PersistentIOU(
-            @Column(name = "remetente") //Remetente da receita
-            var remetente: String,
-
             @Column(name = "dataEmissao") //Data da emissão da receita
             var dataEmissao: String,
 
@@ -61,8 +58,20 @@ object IOUSchemaV1 : MappedSchema(
             @Column(name = "linear_id")
             var linearId: UUID
 
+
     ) : PersistentState() {
         // Default constructor required by hibernate.
-        constructor(): this("", "", 0,  "", "", "", 0,"", 0, "", "", 0, UUID.randomUUID())
+        constructor() : this("",
+                0,
+                "",
+                "",
+                "",
+                0,
+                "",
+                0,
+                "",
+                "",
+                0,
+                UUID.randomUUID())
     }
 }

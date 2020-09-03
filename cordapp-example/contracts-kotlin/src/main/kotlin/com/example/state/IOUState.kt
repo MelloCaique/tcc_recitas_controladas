@@ -1,6 +1,7 @@
 package com.example.state
 
 import com.example.contract.IOUContract
+import com.example.iou.MedicoIOU
 import com.example.schema.IOUSchemaV1
 import net.corda.core.contracts.BelongsToContract
 import net.corda.core.contracts.ContractState
@@ -22,18 +23,8 @@ import net.corda.core.schemas.QueryableState
  * @param borrower the party receiving and approving the IOU.
  */
 @BelongsToContract(IOUContract::class)
-data class IOUState(val remetente: Party,
-                    val dataEmissao: String,
-                    val numeroReceita: Int,
-                    val nomePaciente: String,
-                    val enderecoPaciente: String,
-                    val nomeMedico: String,
-                    val crmMedico: Int,
-                    val nomeMedicamento: String,
-                    val quantidadeMedicamento: Int,
-                    val formulaMedicamento: String,
-                    val doseUnidade: String,
-                    val posologia: Int,
+data class IOUState( val iou: MedicoIOU,
+                     val remetente: Party,
                     override val linearId: UniqueIdentifier = UniqueIdentifier()):
         LinearState, QueryableState {
     /** The public keys of the involved parties. */
@@ -42,18 +33,17 @@ data class IOUState(val remetente: Party,
     override fun generateMappedObject(schema: MappedSchema): PersistentState {
         return when (schema) {
             is IOUSchemaV1 -> IOUSchemaV1.PersistentIOU(
-                    this.remetente.name.toString(),
-                    this.dataEmissao,
-                    this.numeroReceita,
-                    this.nomePaciente,
-                    this.enderecoPaciente,
-                    this.nomeMedico,
-                    this.crmMedico,
-                    this.nomeMedicamento,
-                    this.quantidadeMedicamento,
-                    this.formulaMedicamento,
-                    this.doseUnidade,
-                    this.posologia,
+                    this.iou.receita.dataEmissao,
+                    this.iou.receita.numeroReceita,
+                    this.iou.receita.nomePaciente,
+                    this.iou.receita.enderecoPaciente,
+                    this.iou.receita.nomeMedico,
+                    this.iou.receita.crmMedico,
+                    this.iou.receita.nomeMedicamento,
+                    this.iou.receita.quantidadeMedicamento,
+                    this.iou.receita.formulaMedicamento,
+                    this.iou.receita.doseUnidade,
+                    this.iou.receita.posologia,
                     this.linearId.id
             )
             else -> throw IllegalArgumentException("Unrecognised schema $schema")
