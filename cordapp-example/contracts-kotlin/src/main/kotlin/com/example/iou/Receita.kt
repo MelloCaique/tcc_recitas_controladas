@@ -6,9 +6,7 @@ import net.corda.core.identity.Party
 import net.corda.core.serialization.CordaSerializable
 
 @CordaSerializable
-@JsonInclude(JsonInclude.Include.NON_EMPTY)
 data class Receita(
-        @JsonProperty("data_emissao")
         val dataEmissao: String,
         val numeroReceita: Int,
         val nomePaciente: String,
