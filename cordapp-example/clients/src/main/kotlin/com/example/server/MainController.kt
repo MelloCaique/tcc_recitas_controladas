@@ -1,6 +1,8 @@
 package com.example.server
 
 import com.example.flow.ExampleFlow.Initiator
+import com.example.iou.Receita
+import com.example.iou.ReceitaIOU
 import com.example.state.IOUState
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.identity.CordaX500Name
@@ -84,6 +86,14 @@ class MainController(rpc: NodeRPCConnection) {
         val formulaMedicamento = request.getParameter("formulaMedicamento")
         val doseUnidade = request.getParameter("doseUnidade")
         val posologia = request.getParameter("posologia").toInt()
+        //val comprador: String? = null,
+        //val enderecoComprador: String? = null,
+        //val rg: Int? = null,
+        //val telefone: Int? = null,
+        //val nomeVendedor: String?= null,
+        //val cnpj: Int? = null,
+        //val data: String? = null
+
         if(dataEmissao == null ) {
             return ResponseEntity.badRequest().body("Query parameter 'dataEmissao' must not be null.\n")
         }
@@ -119,7 +129,7 @@ class MainController(rpc: NodeRPCConnection) {
         }
 
         return try {
-            val signedTx = proxy.startTrackedFlow(::Initiator, dataEmissao, numeroReceita, nomePaciente, enderecoPaciente, nomeMedico, crmMedico, nomeMedicamento, quantidadeMedicamento, formulaMedicamento, doseUnidade, posologia).returnValue.getOrThrow()
+            val signedTx = proxy.startTrackedFlow(::Initiator, Receita(dataEmissao, numeroReceita, nomePaciente, enderecoPaciente, nomeMedico, crmMedico, nomeMedicamento, quantidadeMedicamento, formulaMedicamento, doseUnidade, posologia)).returnValue.getOrThrow()
             ResponseEntity.status(HttpStatus.CREATED).body("Transaction id ${signedTx.id} committed to ledger.\n")
 
         } catch (ex: Throwable) {

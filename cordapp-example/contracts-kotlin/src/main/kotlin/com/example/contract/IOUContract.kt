@@ -37,15 +37,6 @@ class IOUContract : Contract {
             "Only one output state should be created." using (tx.outputs.size == 1)
             val out = tx.outputsOfType<IOUState>().single()
             "All of the participants must be signers." using (command.signers.containsAll(out.participants.map { it.owningKey }))
-
-            //"Placeholder de verificação do CPF" using (out.CPF > 0)
-
-            //"Placeholder de verificação do Nome" using (condição)
-
-            // IOU-specific constraints.
-            //"The IOU's value must be non-negative." using (out.value > 0)
-
-
         }
     }
 

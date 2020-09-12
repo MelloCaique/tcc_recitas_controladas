@@ -1,11 +1,46 @@
 # Controle de Receitas
 
-### Campos e seus tipos
-- procedimento: Int
-- valorProcedimento: Int
-- dataOcorrência: String
-- nome: String
-- cpf: Int
+### Deploy Nodes
+
+-Unix/Mac OSX: 
+```
+./gradlew deployNodes
+```
+-Windows:
+```
+gradlew.bat deployNodes
+```
+
+### Run Nodes
+
+-Unix/Mac OSX: 
+```
+workflows-kotlin/build/nodes/runnodes
+```
+-Windows:
+```
+call workflows-kotlin\build\nodes\runnodes.bat
+```
+
+### Campos da receita B2 e seus tipos
+-dataEmissao: String
+-numeroReceita: Int
+-nomePaciente: String
+-enderecoPaciente: String
+-nomeMedico: String
+-crmMedico: Int
+-nomeMedicamento: String
+-quantidadeMedicamento: Int
+-formulaMedicamento: String
+-doseUnidade: String
+-posologia: Int
+-comprador: String
+-enderecoComprador: String
+-rg: Int
+-telefone: Int
+-nomeVendedor: String
+-cnpj: Int
+-data: String
 
 ### Teste de Request na API:
 ```

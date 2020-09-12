@@ -82,7 +82,8 @@ object IOUSchemaV1 : MappedSchema(
 
     ) : PersistentState() {
         // Default constructor required by hibernate.
-        constructor() : this("",
+        constructor() : this(
+                "",
                 0,
                 "",
                 "",
