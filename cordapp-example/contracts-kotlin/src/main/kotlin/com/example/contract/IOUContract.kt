@@ -6,6 +6,7 @@ import net.corda.core.contracts.Contract
 import net.corda.core.contracts.requireSingleCommand
 import net.corda.core.contracts.requireThat
 import net.corda.core.transactions.LedgerTransaction
+import java.security.PublicKey
 
 /**
  * A implementation of a basic smart contract in Corda.
@@ -30,14 +31,27 @@ class IOUContract : Contract {
      * considered valid.
      */
     override fun verify(tx: LedgerTransaction) {
-        val command = tx.commands.requireSingleCommand<Commands.Create>()
-        requireThat {
-            // Generic constraints around the IOU transaction.
-            "No inputs should be consumed when issuing an IOU." using (tx.inputs.isEmpty())
-            "Only one output state should be created." using (tx.outputs.size == 1)
-            val out = tx.outputsOfType<IOUState>().single()
-            "All of the participants must be signers." using (command.signers.containsAll(out.participants.map { it.owningKey }))
+        val command = tx.commands.requireSingleCommand<Commands>()
+        val setOfSigners = command.signers.toSet()
+        when (command.value) {
+            is Commands.Create -> verifyCreate(tx, setOfSigners)
+            is Commands.Update -> verifyUpdate(tx, setOfSigners)
+            else -> throw IllegalArgumentException("Unrecognised command")
         }
+    }
+
+    private fun verifyCreate(tx: LedgerTransaction, signers: Set<PublicKey>) = requireThat {
+        "No inputs should be consumed when issuing an IOU." using (tx.inputs.isEmpty())
+        "Only one output state should be created." using (tx.outputs.size == 1)
+        val out = tx.outputsOfType<IOUState>().single()
+        "All of the participants must be signers." using (signers.containsAll(out.participants.map { it.owningKey }))
+    }
+
+    private fun verifyUpdate(tx: LedgerTransaction, signers: Set<PublicKey>) = requireThat {
+        "More than one input should be consumed when issuing an IOU" using (tx.inputs.isNotEmpty())
+        "Only one output state should be created." using (tx.outputs.size == 1)
+        val out = tx.outputsOfType<IOUState>().single()
+       "All of the participants must be signers." using (signers.containsAll(out.participants.map { it.owningKey }))
     }
 
     /**
@@ -45,5 +59,6 @@ class IOUContract : Contract {
      */
     interface Commands : CommandData {
         class Create : Commands
+        class Update : Commands
     }
 }
