@@ -4,6 +4,9 @@ import co.paralleluniverse.fibers.Suspendable
 import com.example.contract.IOUContract
 import com.example.flow.ExampleFlowUpdate.Acceptor
 import com.example.flow.ExampleFlowUpdate.Initiator
+import com.example.iou.ReceitaIOU
+import com.example.iou.Venda
+import com.example.iou.VendaIOU
 import com.example.state.IOUState
 import com.google.common.collect.ImmutableList
 import net.corda.core.contracts.Command
@@ -34,7 +37,7 @@ object ExampleFlowUpdate {
     @Suppress("DEPRECATED_IDENTITY_EQUALS")
     @InitiatingFlow
     @StartableByRPC
-    class Initiator(private val linearId: UniqueIdentifier) : FlowLogic<SignedTransaction>() {
+    class Initiator(private val linearId: UniqueIdentifier, val vendaFarma: Venda) : FlowLogic<SignedTransaction>() {
         /**
          * The progress tracker checkpoints each stage of the flow and outputs the specified messages when each
          * checkpoint is reached in the code. See the 'progressTracker.currentStep' expressions within the call() function.
@@ -98,12 +101,22 @@ object ExampleFlowUpdate {
             }
             val inputStateAndRef = obligations[0]
             val input = inputStateAndRef.state.data
-            if(input.iou.receita.comprador !== null)
+            if(input.iouVenda !== null)
             {
                 progressTracker.currentStep = VERIFYING_BUYER
-                throw FlowException(String.format("Receita has already been CONSUMED. Buyer: %s ", input.iou.receita.comprador))
+                throw FlowException(String.format("Receita has already been CONSUMED. Buyer: %s ", input.iouVenda!!.venda.comprador))
             }
-            val output = IOUState(input.iou,ourIdentity,linearId)
+                val iouState = IOUState(
+                        ReceitaIOU(
+                                input.iou.receita
+                        ),
+                        VendaIOU(
+                               vendaFarma
+                        ),
+                        serviceHub.myInfo.legalIdentities.first()
+                )
+
+            val output = IOUState(input.iou,iouState.iouVenda,ourIdentity,linearId)
             val txCommand = Command(IOUContract.Commands.Update(), output.participants.map { it.owningKey })
             val txBuilder = TransactionBuilder(notary)
                     .addInputState(inputStateAndRef.referenced().stateAndRef)

@@ -6,6 +6,7 @@ import com.example.flow.ExampleFlow.Acceptor
 import com.example.flow.ExampleFlow.Initiator
 import com.example.iou.ReceitaIOU
 import com.example.iou.Receita
+import com.example.iou.VendaIOU
 import com.example.state.IOUState
 import net.corda.core.contracts.Command
 import net.corda.core.contracts.requireThat
@@ -80,6 +81,7 @@ object ExampleFlow {
                     ReceitaIOU(
                          receita
                     ),
+                    null,
                     serviceHub.myInfo.legalIdentities.first()
             )
             val txCommand = Command(IOUContract.Commands.Create(), iouState.participants.map { it.owningKey })

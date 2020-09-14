@@ -17,12 +17,5 @@ data class Receita(
         val quantidadeMedicamento: Int,
         val formulaMedicamento: String,
         val doseUnidade: String,
-        val posologia: Int,
-        val comprador: String? = null,
-        val enderecoComprador: String? = null,
-        val rg: Int? = null,
-        val telefone: Int? = null,
-        val nomeVendedor: String?= null,
-        val cnpj: Int? = null,
-        val data: String? = null
+        val posologia: Int
 )

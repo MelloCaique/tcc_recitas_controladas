@@ -52,6 +52,11 @@ curl -i -X POST 'http://localhost:50005/api/example/create-iou?procedimento=1&va
 flow start com.example.flow.ExampleFlow$Initiator receita:{dataEmissao: "diadia", numeroReceita: 1, nomePaciente: "caique", enderecoPaciente: "rua", nomeMedico: "Dr", crmMedico: 1, nomeMedicamento: "oie", quantidadeMedicamento: 1, formulaMedicamento: "ml", doseUnidade: "1", posologia: 1}
 ```
 
+### Teste do fluxo de venda do medicamento
+```
+flow start com.example.flow.ExampleFlowUpdate$Initiator linearId: "3882b07e-d3fb-4b6a-b7dd-19708090ec0c", vendaFarma:{comprador: "fernanda", enderecoComprador: "rua", rg: 1, telefone: 1, nomeVendedor: "eu", cnpj: 1, data: "hoje"}
+```
+
 ### Teste de consulta de registro das ocorrências
 ```
 run vaultQuery contractStateType: com.example.state.IOUState
