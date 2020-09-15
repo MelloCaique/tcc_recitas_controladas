@@ -24,7 +24,7 @@ import net.corda.core.schemas.QueryableState
  * @param borrower the party receiving and approving the IOU.
  */
 @BelongsToContract(IOUContract::class)
-data class IOUState(val iou: ReceitaIOU,
+data class IOUState(val iouReceita: ReceitaIOU,
                     val iouVenda: VendaIOU? = null,
                     val remetente: Party,
                     override val linearId: UniqueIdentifier = UniqueIdentifier()):
@@ -35,17 +35,17 @@ data class IOUState(val iou: ReceitaIOU,
     override fun generateMappedObject(schema: MappedSchema): PersistentState {
         return when (schema) {
             is IOUSchemaV1 -> IOUSchemaV1.PersistentIOU(
-                    this.iou.receita.dataEmissao,
-                    this.iou.receita.numeroReceita,
-                    this.iou.receita.nomePaciente,
-                    this.iou.receita.enderecoPaciente,
-                    this.iou.receita.nomeMedico,
-                    this.iou.receita.crmMedico,
-                    this.iou.receita.nomeMedicamento,
-                    this.iou.receita.quantidadeMedicamento,
-                    this.iou.receita.formulaMedicamento,
-                    this.iou.receita.doseUnidade,
-                    this.iou.receita.posologia,
+                    this.iouReceita.receita.dataEmissao,
+                    this.iouReceita.receita.numeroReceita,
+                    this.iouReceita.receita.nomePaciente,
+                    this.iouReceita.receita.enderecoPaciente,
+                    this.iouReceita.receita.nomeMedico,
+                    this.iouReceita.receita.crmMedico,
+                    this.iouReceita.receita.nomeMedicamento,
+                    this.iouReceita.receita.quantidadeMedicamento,
+                    this.iouReceita.receita.formulaMedicamento,
+                    this.iouReceita.receita.doseUnidade,
+                    this.iouReceita.receita.posologia,
                     this.iouVenda?.venda?.comprador,
                     this.iouVenda?.venda?.enderecoComprador,
                     this.iouVenda?.venda?.rg,

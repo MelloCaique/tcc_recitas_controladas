@@ -44,6 +44,7 @@ class IOUContract : Contract {
         "No inputs should be consumed when issuing an IOU." using (tx.inputs.isEmpty())
         "Only one output state should be created." using (tx.outputs.size == 1)
         val out = tx.outputsOfType<IOUState>().single()
+        "" using (out.iouReceita.receita.quantidadeMedicamento > 0)
         "All of the participants must be signers." using (signers.containsAll(out.participants.map { it.owningKey }))
     }
 
@@ -51,7 +52,18 @@ class IOUContract : Contract {
         "More than one input should be consumed when issuing an IOU" using (tx.inputs.isNotEmpty())
         "Only one output state should be created." using (tx.outputs.size == 1)
         val out = tx.outputsOfType<IOUState>().single()
+        "Sales receipt must be fulfilled" using (out.iouVenda !== null)
+        "Buyer must be fulfilled" using(out.iouVenda?.venda?.comprador !== null)
+        "CNPJ must be fulfilled" using(out.iouVenda?.venda?.cnpj !== null)
+        "Sell date must be fulfilled" using(out.iouVenda?.venda?.data !== null)
+        "Buyer Address must be fulfilled" using(out.iouVenda?.venda?.enderecoComprador !== null)
+        "Seller must be fulfilled" using(out.iouVenda?.venda?.nomeVendedor !== null)
+        "Buyer RG must be fulfilled" using(out.iouVenda?.venda?.rg !== null)
+        "Buyer phone number must be fulfilled" using(out.iouVenda?.venda?.telefone !== null)
        "All of the participants must be signers." using (signers.containsAll(out.participants.map { it.owningKey }))
+        val input = tx.inputsOfType<IOUState>().single()
+        "LinearId input must be equal to output" using (input.linearId == out.linearId)
+        "Sales receipt must be not fulfilled" using (input.iouVenda == null)
     }
 
     /**

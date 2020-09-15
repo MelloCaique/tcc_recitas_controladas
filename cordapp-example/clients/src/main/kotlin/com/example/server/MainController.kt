@@ -1,12 +1,10 @@
 package com.example.server
 
-import com.example.flow.ExampleFlow.Initiator
+import com.example.flow.FlowCreate.Initiator
 import com.example.iou.Receita
-import com.example.iou.ReceitaIOU
 import com.example.state.IOUState
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.identity.CordaX500Name
-import net.corda.core.messaging.startFlow
 import net.corda.core.messaging.startTrackedFlow
 import net.corda.core.messaging.vaultQueryBy
 import net.corda.core.utilities.getOrThrow
