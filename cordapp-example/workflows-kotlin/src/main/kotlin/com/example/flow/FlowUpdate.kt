@@ -3,7 +3,7 @@ package com.example.flow
 import co.paralleluniverse.fibers.Suspendable
 import com.example.contract.IOUContract
 import com.example.flow.FlowUpdate.Acceptor
-import com.example.flow.FlowUpdate.Initiator
+import com.example.flow.FlowUpdate.InitiatorUpdate
 import com.example.iou.ReceitaIOU
 import com.example.iou.Venda
 import com.example.iou.VendaIOU
@@ -23,7 +23,7 @@ import net.corda.core.utilities.ProgressTracker.Step
 
 
 /**
- * This flow allows two parties (the [Initiator] and the [Acceptor]) to come to an agreement about the IOU encapsulated
+ * This flow allows two parties (the [InitiatorUpdate] and the [Acceptor]) to come to an agreement about the IOU encapsulated
  * within an [IOUState].
  *
  * In our simple example, the [Acceptor] always accepts a valid IOU.
@@ -37,7 +37,7 @@ object FlowUpdate {
     @Suppress("DEPRECATED_IDENTITY_EQUALS")
     @InitiatingFlow
     @StartableByRPC
-    class Initiator(private val linearId: UniqueIdentifier, val vendaFarma: Venda) : FlowLogic<SignedTransaction>() {
+    class InitiatorUpdate(private val linearId: UniqueIdentifier, private val vendaFarma: Venda) : FlowLogic<SignedTransaction>() {
         /**
          * The progress tracker checkpoints each stage of the flow and outputs the specified messages when each
          * checkpoint is reached in the code. See the 'progressTracker.currentStep' expressions within the call() function.
@@ -97,7 +97,7 @@ object FlowUpdate {
             if (obligations.isEmpty())
             {
                 progressTracker.currentStep = VERIFYING_OBLIGATION_NOT_FOUND
-                throw FlowException(String.format("Obligation with id %s not found.", linearId))
+                throw FlowException(String.format("Obligation with id %s not found.", linearId.toString()))
             }
             val inputStateAndRef = obligations[0]
             val input = inputStateAndRef.state.data
@@ -147,7 +147,7 @@ object FlowUpdate {
         }
     }
 
-    @InitiatedBy(Initiator::class)
+    @InitiatedBy(InitiatorUpdate::class)
     class Acceptor(val otherPartySession: FlowSession) : FlowLogic<SignedTransaction>() {
         @Suspendable
         override fun call(): SignedTransaction {

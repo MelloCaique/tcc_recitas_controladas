@@ -15,7 +15,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 @SpringBootApplication
 open class Server {
     /**
-     * Spring Bean that binds a Corda Jackson object-mapper to HTTP message types used in Spring.
+     * Spring BeanReceita that binds a Corda Jackson object-mapper to HTTP message types used in Spring.
      */
     @Bean
     open fun mappingJackson2HttpMessageConverter(@Autowired rpcConnection: NodeRPCConnection): MappingJackson2HttpMessageConverter {
