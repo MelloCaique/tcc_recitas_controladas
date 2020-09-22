@@ -13,6 +13,7 @@ import net.corda.core.identity.Party
 import net.corda.core.schemas.MappedSchema
 import net.corda.core.schemas.PersistentState
 import net.corda.core.schemas.QueryableState
+import java.time.LocalDateTime
 
 /**
  * The state object recording IOU agreements between two parties.
@@ -24,7 +25,8 @@ import net.corda.core.schemas.QueryableState
  * @param borrower the party receiving and approving the IOU.
  */
 @BelongsToContract(IOUContract::class)
-data class IOUState(val iouReceita: ReceitaIOU,
+data class IOUState(val dataEmissao: LocalDateTime,
+                    val iouReceita: ReceitaIOU,
                     val iouVenda: VendaIOU? = null,
                     val remetente: Party,
                     override val linearId: UniqueIdentifier = UniqueIdentifier()):
@@ -35,7 +37,7 @@ data class IOUState(val iouReceita: ReceitaIOU,
     override fun generateMappedObject(schema: MappedSchema): PersistentState {
         return when (schema) {
             is IOUSchemaV1 -> IOUSchemaV1.PersistentIOU(
-                    this.iouReceita.receita.dataEmissao,
+                    this.dataEmissao,
                     this.iouReceita.receita.numeroReceita,
                     this.iouReceita.receita.nomePaciente,
                     this.iouReceita.receita.enderecoPaciente,

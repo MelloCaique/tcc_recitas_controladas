@@ -10,7 +10,6 @@ import com.example.iou.VendaIOU
 import com.example.state.IOUState
 import com.google.common.collect.ImmutableList
 import net.corda.core.contracts.Command
-import net.corda.core.contracts.StateAndRef
 import net.corda.core.contracts.UniqueIdentifier
 import net.corda.core.contracts.requireThat
 import net.corda.core.flows.*
@@ -45,7 +44,6 @@ object FlowUpdate {
         companion object {
             object GENERATING_TRANSACTION : Step("Generating transaction based on new IOU.")
             object VERIFYING_OBLIGATION_NOT_FOUND : Step("Obligation with id inputed not found.")
-            object VERIFYING_BUYER : Step("Receita has already been CONSUMED")
             object VERIFYING_TRANSACTION : Step("Verifying contract constraints.")
             object SIGNING_TRANSACTION : Step("Signing transaction with our private key.")
             object GATHERING_SIGS : Step("Gathering the counterparty's signature.") {
@@ -59,7 +57,6 @@ object FlowUpdate {
             fun tracker() = ProgressTracker(
                     GENERATING_TRANSACTION,
                     VERIFYING_OBLIGATION_NOT_FOUND,
-                    VERIFYING_BUYER,
                     VERIFYING_TRANSACTION,
                     SIGNING_TRANSACTION,
                     GATHERING_SIGS,
@@ -93,20 +90,16 @@ object FlowUpdate {
                     ImmutableList.of(linearId),
                     Vault.StateStatus.UNCONSUMED,
                     null)
-            val obligations: List<StateAndRef<IOUState>> = serviceHub.vaultService.queryBy(IOUState::class.java, queryCriteria).states
+            val obligations = serviceHub.vaultService.queryBy(IOUState::class.java, queryCriteria).states
             if (obligations.isEmpty())
             {
                 progressTracker.currentStep = VERIFYING_OBLIGATION_NOT_FOUND
-                throw FlowException(String.format("Obligation with id %s not found.", linearId.toString()))
+                throw FlowException(String.format("Receita não encontrada no sistema. Código: %s inválido", linearId.toString()))
             }
             val inputStateAndRef = obligations[0]
             val input = inputStateAndRef.state.data
-            if(input.iouVenda !== null)
-            {
-                progressTracker.currentStep = VERIFYING_BUYER
-                throw FlowException(String.format("Receita has already been CONSUMED. Buyer: %s ", input.iouVenda!!.venda.comprador))
-            }
                 val iouState = IOUState(
+                        input.dataEmissao,
                         ReceitaIOU(
                                 input.iouReceita.receita
                         ),
@@ -115,8 +108,7 @@ object FlowUpdate {
                         ),
                         serviceHub.myInfo.legalIdentities.first()
                 )
-
-            val output = IOUState(input.iouReceita,iouState.iouVenda,ourIdentity,linearId)
+            val output = IOUState(input.dataEmissao,input.iouReceita,iouState.iouVenda,ourIdentity,linearId)
             val txCommand = Command(IOUContract.Commands.Update(), output.participants.map { it.owningKey })
             val txBuilder = TransactionBuilder(notary)
                     .addInputState(inputStateAndRef.referenced().stateAndRef)

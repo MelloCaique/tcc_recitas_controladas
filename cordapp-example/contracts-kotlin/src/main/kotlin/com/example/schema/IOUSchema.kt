@@ -2,6 +2,7 @@ package com.example.schema
 
 import net.corda.core.schemas.MappedSchema
 import net.corda.core.schemas.PersistentState
+import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -23,7 +24,7 @@ object IOUSchemaV1 : MappedSchema(
     @Table(name = "iou_states")
     class PersistentIOU(
             @Column(name = "dataEmissao") //Data da emissão da receita
-            var dataEmissao: String,
+            var dataEmissao: LocalDateTime,
 
             @Column(name = "numeroReceita") //Número de indentificação da receita
             var numeroReceita: Int,
@@ -50,10 +51,10 @@ object IOUSchemaV1 : MappedSchema(
             var formulaMedicamento: String,
 
             @Column(name = "doseUnidade") //Dose por unidade do medicamento
-            var doseUnidade: String,
+            var doseUnidade: Int,
 
             @Column(name = "posologia") //Dosagem do medicamenento
-            var posologia: Int,
+            var posologia: String,
 
             @Column(name = "comprador")
             var comprador: String? = null,
@@ -74,7 +75,7 @@ object IOUSchemaV1 : MappedSchema(
             var cnpj: Int? = null,
 
             @Column(name = "data")
-            var data: String? = null,
+            var data: LocalDateTime? = null,
 
             @Column(name = "linear_id")
             var linearId: UUID
@@ -83,7 +84,7 @@ object IOUSchemaV1 : MappedSchema(
     ) : PersistentState() {
         // Default constructor required by hibernate.
         constructor() : this(
-                "",
+                LocalDateTime.now(),
                 0,
                 "",
                 "",
@@ -92,15 +93,15 @@ object IOUSchemaV1 : MappedSchema(
                 "",
                 0,
                 "",
-                "",
                 0,
                 "",
                 "",
+                "",
                 0,
                 0,
                 "",
                 0,
-                "",
+                LocalDateTime.now(),
                 UUID.randomUUID())
     }
 }

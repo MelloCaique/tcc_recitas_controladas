@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import net.corda.core.identity.Party
 import net.corda.core.serialization.CordaSerializable
+import java.time.LocalDateTime
 
 @CordaSerializable
 data class Venda(
@@ -13,5 +14,5 @@ data class Venda(
         val telefone: Int,
         val nomeVendedor: String,
         val cnpj: Int,
-        val data: String
+        val data: LocalDateTime = LocalDateTime.now()
 )

@@ -20,8 +20,9 @@ import org.springframework.http.MediaType
 import org.springframework.http.MediaType.*
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.util.*
-import javax.servlet.http.HttpServletRequest
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.temporal.TemporalAdjusters
 
 val SERVICE_NAMES = listOf("Notary", "Network Map Service")
 
@@ -62,22 +63,39 @@ class MainController(rpc: NodeRPCConnection) {
     /**
      * Displays all IOU states that exist in the node's vault.
      */
-    @GetMapping(value = [ "ious" ], produces = [ APPLICATION_JSON_VALUE ])
+    @GetMapping(value = [ "receitas" ], produces = [ APPLICATION_JSON_VALUE ])
     fun getIOUs() : ResponseEntity<List<StateAndRef<IOUState>>> {
         return ResponseEntity.ok(proxy.vaultQueryBy<IOUState>().states)
     }
 
-    @PostMapping(value = [ "linearid-check" ], produces = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping(value = [ "check-receita" ], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun CheckLinearId(@RequestBody request: BeanCheck): ResponseEntity<String> {
         val obligations = proxy.vaultQueryBy<IOUState>(QueryCriteria.LinearStateQueryCriteria(
                 null,
                 ImmutableList.of(request.linearId),
                 Vault.StateStatus.UNCONSUMED,
                 null)).states
-        if(obligations.isNotEmpty() && obligations[0].state.data.linearId == request.linearId && obligations[0].state.data.iouVenda == null ){
-            return ResponseEntity.ok("Receita is APPROVED to selling")
+        if(obligations.isNotEmpty()){
+            if(obligations[0].state.data.linearId == request.linearId &&
+                    obligations[0].state.data.iouVenda == null){
+                val firstIntervalDate = LocalDate.of(
+                        obligations[0].state.data.dataEmissao.year,
+                        obligations[0].state.data.dataEmissao.month,
+                        obligations[0].state.data.dataEmissao.dayOfMonth).atStartOfDay()
+                val secondIntervalDate = firstIntervalDate.with(TemporalAdjusters.lastDayOfMonth()).plusDays(30)
+                if(LocalDateTime.now() <= secondIntervalDate){
+                    return ResponseEntity.ok("Receita está disponível para venda")
+                }else{
+                    return ResponseEntity.badRequest().body("Receita não está disponível para venda: " +
+                            "Código da Validade da receita expirada")
+                }
+            }else{
+                return ResponseEntity.badRequest().body("Receita não está disponível para venda: " +
+                        "Receita já foi vendida")
+            }
         }else{
-            return ResponseEntity.badRequest().body("Receita is NOT APPROVED to selling")
+            return ResponseEntity.badRequest().body("Receita não está disponível para venda: " +
+                    "Código da receita inválido")
         }
     }
 
@@ -96,43 +114,8 @@ class MainController(rpc: NodeRPCConnection) {
     @PostMapping(value = [ "create-receita" ], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun createIOU(@RequestBody request: BeanReceita): ResponseEntity<String> {
 
-        if(request.dataEmissao == null ) {
-            return ResponseEntity.badRequest().body("Query parameter 'dataEmissao' must not be null.\n")
-        }
-        if(request.numeroReceita <= 0 ) {
-            return ResponseEntity.badRequest().body("Query parameter 'numeroReceita' must be non-negative.\n")
-        }
-        if(request.nomePaciente == null){
-            return ResponseEntity.badRequest().body("Query parameter 'nomePaciente' must not be null.\n")
-        }
-        if(request.enderecoPaciente == null){
-            return ResponseEntity.badRequest().body("Query parameter 'enderecoPaciente' must not be null.\n")
-        }
-        if(request.nomeMedico == null ){
-            return ResponseEntity.badRequest().body("Query parameter 'nomeMedico' must not be null.\n")
-        }
-        if(request.crmMedico <= 0 ){
-            return ResponseEntity.badRequest().body("Query parameter 'crmMedico' must be non-negative.\n")
-        }
-        if(request.nomeMedicamento == null ){
-            return ResponseEntity.badRequest().body("Query parameter 'nomeMedicamento' must not be null.\n")
-        }
-        if(request.quantidadeMedicamento <= 0 ){
-            return ResponseEntity.badRequest().body("Query parameter 'quantidadeMedicamento' must be non-negative.\n")
-        }
-        if(request.formulaMedicamento == null ){
-            return ResponseEntity.badRequest().body("Query parameter 'formulaMedicamento' must not be null.\n")
-        }
-        if(request.doseUnidade == null ){
-            return ResponseEntity.badRequest().body("Query parameter 'doseUnidade' must not be null.\n")
-        }
-        if(request.posologia <= 0 ){
-            return ResponseEntity.badRequest().body("Query parameter 'doseUnidade' must be non-negative.\n")
-        }
-
         return try {
             val signedTx = proxy.startTrackedFlow(::Initiator, Receita(
-                    request.dataEmissao,
                     request.numeroReceita,
                     request.nomePaciente,
                     request.enderecoPaciente,
@@ -151,35 +134,9 @@ class MainController(rpc: NodeRPCConnection) {
         }
     }
 
-    @PostMapping(value = [ "updade-receita" ], produces = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping(value = [ "venda-receita" ], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun UpdateIOU(@RequestBody request: BeanVenda): ResponseEntity<String> {
 
-        var newLinear = request.linearId as UniqueIdentifier
-
-        if(request.linearId == null ) {
-            return ResponseEntity.badRequest().body("Query parameter 'linearId' must not be null.\n")
-        }
-        if(request.comprador == null ) {
-            return ResponseEntity.badRequest().body("Query parameter 'linearId' must not be null.\n")
-        }
-        if(request.enderecoComprador == null ) {
-            return ResponseEntity.badRequest().body("Query parameter 'linearId' must not be null.\n")
-        }
-        if(request.rg <= 0) {
-            return ResponseEntity.badRequest().body("Query parameter 'linearId' must not be null.\n")
-        }
-        if(request.telefone <= 0) {
-            return ResponseEntity.badRequest().body("Query parameter 'linearId' must not be null.\n")
-        }
-        if(request.nomeVendedor == null ) {
-            return ResponseEntity.badRequest().body("Query parameter 'linearId' must not be null.\n")
-        }
-        if(request.cnpj <= 0) {
-            return ResponseEntity.badRequest().body("Query parameter 'linearId' must not be null.\n")
-        }
-        if(request.data == null ) {
-            return ResponseEntity.badRequest().body("Query parameter 'linearId' must not be null.\n")
-        }
 
         return try {
             val signedTx = proxy.startTrackedFlow(::InitiatorUpdate,
@@ -193,8 +150,8 @@ class MainController(rpc: NodeRPCConnection) {
                             request.rg,
                             request.telefone,
                             request.nomeVendedor,
-                            request.cnpj,
-                            request.data)).returnValue.getOrThrow()
+                            request.cnpj
+                    )).returnValue.getOrThrow()
             ResponseEntity.status(HttpStatus.CREATED).body("Transaction id ${signedTx.id} committed to ledger.\n")
 
         } catch (ex: Throwable) {
@@ -206,7 +163,7 @@ class MainController(rpc: NodeRPCConnection) {
     /**
      * Displays all IOU states that only this node has been involved in.
      */
-    @GetMapping(value = [ "my-ious" ], produces = [ APPLICATION_JSON_VALUE ])
+    @GetMapping(value = [ "my-receitas" ], produces = [ APPLICATION_JSON_VALUE ])
     fun getMyIOUs(): ResponseEntity<List<StateAndRef<IOUState>>>  {
         val myious = proxy.vaultQueryBy<IOUState>().states.filter { it.state.data.remetente.equals(proxy.nodeInfo().legalIdentities.first()) }
         return ResponseEntity.ok(myious)

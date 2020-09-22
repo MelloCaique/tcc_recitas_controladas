@@ -7,9 +7,7 @@ import com.example.flow.FlowCreate.Initiator
 import com.example.iou.Receita
 import com.example.iou.ReceitaIOU
 import com.example.state.IOUState
-import com.google.common.collect.ImmutableList
 import net.corda.core.contracts.Command
-import net.corda.core.contracts.StateAndRef
 import net.corda.core.contracts.requireThat
 import net.corda.core.flows.*
 import net.corda.core.node.services.Vault
@@ -18,7 +16,7 @@ import net.corda.core.transactions.SignedTransaction
 import net.corda.core.transactions.TransactionBuilder
 import net.corda.core.utilities.ProgressTracker
 import net.corda.core.utilities.ProgressTracker.Step
-
+import java.time.LocalDateTime
 
 
 /**
@@ -84,6 +82,7 @@ object FlowCreate {
             progressTracker.currentStep = GENERATING_TRANSACTION
             // Generate an unsigned transaction.
             val iouState = IOUState(
+                    LocalDateTime.now(),
                     ReceitaIOU(
                          receita
                     ),
@@ -91,13 +90,13 @@ object FlowCreate {
                     serviceHub.myInfo.legalIdentities.first()
             )
             val queryCriteria = QueryCriteria.VaultQueryCriteria(Vault.StateStatus.ALL)
-            val obligations: List<StateAndRef<IOUState>> = serviceHub.vaultService.queryBy(IOUState::class.java, queryCriteria).states
+            val obligations = serviceHub.vaultService.queryBy(IOUState::class.java, queryCriteria).states
             val size = obligations.size
             if (obligations.isNotEmpty()){
                 for(i in 0 until size){
                     if(obligations[i].state.data.iouReceita.receita.numeroReceita == receita.numeroReceita){
                         progressTracker.currentStep = VERIFYING_RECIPT_NUMBER_ALREADY_EXIST
-                        throw FlowException(String.format("Recipt number already exist", receita.numeroReceita))
+                        throw FlowException(String.format("Número da receita %s já existente no sistema", receita.numeroReceita))
                     }
                 }
             }
@@ -139,16 +138,7 @@ object FlowCreate {
                     val output = stx.tx.outputs.single().data
                     "This must be an IOU transaction." using (output is IOUState)
                     val iou = output as IOUState
-                    "Receipt number must be a non-negative values." using (iou.iouReceita.receita.numeroReceita >= 0 && iou.iouReceita.receita.numeroReceita !== null)
-                    "Quantity of the medicine must be a non-negative values." using (iou.iouReceita.receita.quantidadeMedicamento >= 0 && iou.iouReceita.receita.quantidadeMedicamento !== null)
-                    "Dosage must be a non-negative values." using (iou.iouReceita.receita.posologia >= 0 && iou.iouReceita.receita.posologia !== null)
-                    "Pacient address must be fulfilled" using (iou.iouReceita.receita.enderecoPaciente.isNotBlank())
-                    "Date of issue must be fulfilled" using (iou.iouReceita.receita.dataEmissao.isNotBlank())
-                    "Dosege must be fulfilled" using (iou.iouReceita.receita.doseUnidade.isNotBlank())
-                    "Medicine formula must be fulfilled" using (iou.iouReceita.receita.formulaMedicamento.isNotBlank())
-                    "Medicine name address must be fulfilled" using (iou.iouReceita.receita.nomeMedicamento.isNotBlank())
-                    "Doctor name must be fulfilled" using (iou.iouReceita.receita.nomeMedico.isNotBlank())
-                    "Pacient name must be fulfilled" using (iou.iouReceita.receita.nomePaciente.isNotBlank())
+                    "Receipt number must be a non-negative values." using (iou.iouReceita.receita.numeroReceita >= 0)
                 }
             }
             val txId = subFlow(signTransactionFlow).id
