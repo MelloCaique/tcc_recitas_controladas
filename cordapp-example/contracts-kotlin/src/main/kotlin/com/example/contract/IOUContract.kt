@@ -45,20 +45,23 @@ class IOUContract : Contract {
         "Apenas uma receita deve ser gerada como output." using (tx.outputs.size == 1)
         val out = tx.outputsOfType<IOUState>().single()
         "Todos os participantes devem ser signatários." using (signers.containsAll(out.participants.map { it.owningKey }))
-        "Dose diária não pode ultrapassar 15mg" using (out.iouReceita.receita.doseUnidade <= 15)
+        "Numeração da receita deve maior que 0" using (out.iouReceita.receita.numeroReceita > 0)
+        "CRM médico deve ser maior que 0" using (out.iouReceita.receita.crmMedico > 0)
+        "Quantidade máxima de medicamento não deve exceder 60 dias" using (out.iouReceita.receita.quantidadeMedicamento in 1..60)
+        "Dose diária deve estar entre 1mg até 15mg" using (out.iouReceita.receita.doseUnidade in 1..15)
     }
 
     private fun verifyUpdate(tx: LedgerTransaction, signers: Set<PublicKey>) = requireThat {
         "Uma receita deve ser usada como input." using (tx.inputs.isNotEmpty())
         "Apenas uma receita deve ser gerada como output." using (tx.outputs.size == 1)
         val out = tx.outputsOfType<IOUState>().single()
-       "Todos os participantes devem ser signatários" using (signers.containsAll(out.participants.map { it.owningKey }))
+        "Todos os participantes devem ser signatários" using (signers.containsAll(out.participants.map { it.owningKey }))
         val input = tx.inputsOfType<IOUState>().single()
         "Código da receita consumida deve ser igual da receita gerada." using (input.linearId == out.linearId)
-        "A quantitade total do medicamento já foi vendida" using (input.iouVenda == null)
+        "Receita já foi vendida" using (input.iouVenda == null)
         val firstIntervalDate = LocalDate.of(input.dataEmissao.year,input.dataEmissao.month, input.dataEmissao.dayOfMonth).atStartOfDay()
         val secondIntervalDate = firstIntervalDate.with(TemporalAdjusters.lastDayOfMonth()).plusDays(30)
-           "Receita está fora da data limite de validade: 30 dias" using (out.iouVenda?.venda?.data!! <= secondIntervalDate)
+        "Receita está fora da data limite de validade: 30 dias" using (out.iouVenda?.venda?.data!! <= secondIntervalDate)
     }
 
     /**

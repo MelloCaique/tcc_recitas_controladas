@@ -126,8 +126,10 @@ class MainController(rpc: NodeRPCConnection) {
                     request.formulaMedicamento,
                     request.doseUnidade,
                     request.posologia)).returnValue.getOrThrow()
-            ResponseEntity.status(HttpStatus.CREATED).body("Transaction id ${signedTx.id} committed to ledger.\n")
-
+            val size = proxy.vaultQueryBy<IOUState>().states.size
+            val codTracking = proxy.vaultQueryBy<IOUState>().states.get(size-1).state.data.linearId
+            ResponseEntity.status(HttpStatus.CREATED).body("Transaction id ${signedTx.id} committed to ledger.\n" +
+                    "${codTracking}")
         } catch (ex: Throwable) {
             logger.error(ex.message, ex)
             ResponseEntity.badRequest().body(ex.message!!)
