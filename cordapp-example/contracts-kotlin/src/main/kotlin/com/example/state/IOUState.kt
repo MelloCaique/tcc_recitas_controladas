@@ -28,6 +28,7 @@ import java.time.LocalDateTime
 data class IOUState(val dataEmissao: LocalDateTime,
                     val iouReceita: ReceitaIOU,
                     val iouVenda: VendaIOU? = null,
+                    val allParticipants: List<String>,
                     val remetente: Party,
                     override val linearId: UniqueIdentifier = UniqueIdentifier()):
         LinearState, QueryableState {

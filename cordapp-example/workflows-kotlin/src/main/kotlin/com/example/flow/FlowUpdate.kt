@@ -84,6 +84,13 @@ object FlowUpdate {
 
             // Stage 1.
             progressTracker.currentStep = GENERATING_TRANSACTION
+
+            // Obtein reference to the node
+            val myIdentitie = serviceHub.myInfo.legalIdentities.first()
+
+            //Participantes da receita
+            val particpantes: List<String>
+
             // Generate an unsigned transaction.
             val queryCriteria = QueryCriteria.LinearStateQueryCriteria(
                     null,
@@ -97,6 +104,7 @@ object FlowUpdate {
                 throw FlowException(String.format("Receita não encontrada no sistema. Código: %s inválido", linearId.toString()))
             }
             val inputStateAndRef = obligations[0]
+            particpantes = obligations[0].state.data.allParticipants.plus(myIdentitie.name.organisation)
             val input = inputStateAndRef.state.data
                 val iouState = IOUState(
                         input.dataEmissao,
@@ -106,9 +114,10 @@ object FlowUpdate {
                         VendaIOU(
                                vendaFarma
                         ),
-                        serviceHub.myInfo.legalIdentities.first()
+                        particpantes,
+                        myIdentitie
                 )
-            val output = IOUState(input.dataEmissao,input.iouReceita,iouState.iouVenda,ourIdentity,linearId)
+            val output = IOUState(input.dataEmissao,input.iouReceita,iouState.iouVenda,particpantes,myIdentitie,linearId)
             val txCommand = Command(IOUContract.Commands.Update(), output.participants.map { it.owningKey })
             val txBuilder = TransactionBuilder(notary)
                     .addInputState(inputStateAndRef.referenced().stateAndRef)

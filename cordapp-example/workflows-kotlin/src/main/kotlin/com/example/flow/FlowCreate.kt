@@ -80,6 +80,8 @@ object FlowCreate {
             // val notary = serviceHub.networkMapCache.getNotary(CordaX500Name.parse("O=Notary,L=London,C=GB")) // METHOD 2
             // Stage 1.
             progressTracker.currentStep = GENERATING_TRANSACTION
+            // Obtein reference to the node
+            val myIdentitie = serviceHub.myInfo.legalIdentities.first()
             // Generate an unsigned transaction.
             val iouState = IOUState(
                     LocalDateTime.now(),
@@ -87,6 +89,7 @@ object FlowCreate {
                          receita
                     ),
                     null,
+                    listOf(myIdentitie.name.organisation),
                     serviceHub.myInfo.legalIdentities.first()
             )
             val queryCriteria = QueryCriteria.VaultQueryCriteria(Vault.StateStatus.ALL)
