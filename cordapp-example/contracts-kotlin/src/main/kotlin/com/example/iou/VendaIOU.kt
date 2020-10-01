@@ -3,4 +3,4 @@ package com.example.iou
 import net.corda.core.serialization.CordaSerializable
 
 @CordaSerializable
-data class VendaIOU (val venda: Venda)
+data class VendaIOU (val venda: List<Venda>)

@@ -2,6 +2,7 @@ package com.example.state
 
 import com.example.contract.IOUContract
 import com.example.iou.ReceitaIOU
+import com.example.iou.Venda
 import com.example.iou.VendaIOU
 import com.example.schema.IOUSchemaV1
 import net.corda.core.contracts.BelongsToContract
@@ -28,6 +29,7 @@ import java.time.LocalDateTime
 data class IOUState(val dataEmissao: LocalDateTime,
                     val iouReceita: ReceitaIOU,
                     val iouVenda: VendaIOU? = null,
+                    val totalMedicamentoVendido: Int? = null,
                     val allParticipants: List<String>,
                     val remetente: Party,
                     override val linearId: UniqueIdentifier = UniqueIdentifier()):
@@ -49,13 +51,15 @@ data class IOUState(val dataEmissao: LocalDateTime,
                     this.iouReceita.receita.formulaMedicamento,
                     this.iouReceita.receita.doseUnidade,
                     this.iouReceita.receita.posologia,
-                    this.iouVenda?.venda?.comprador,
-                    this.iouVenda?.venda?.enderecoComprador,
-                    this.iouVenda?.venda?.rg,
-                    this.iouVenda?.venda?.telefone,
-                    this.iouVenda?.venda?.nomeVendedor,
-                    this.iouVenda?.venda?.cnpj,
-                    this.iouVenda?.venda?.data,
+                    this.iouVenda?.venda?.get(0)?.quantidadeMedVendida,
+                    this.iouVenda?.venda?.get(0)?.comprador,
+                    this.iouVenda?.venda?.get(0)?.enderecoComprador,
+                    this.iouVenda?.venda?.get(0)?.rg,
+                    this.iouVenda?.venda?.get(0)?.telefone,
+                    this.iouVenda?.venda?.get(0)?.nomeVendedor,
+                    this.iouVenda?.venda?.get(0)?.cnpj,
+                    this.iouVenda?.venda?.get(0)?.data,
+                    this.totalMedicamentoVendido,
                     this.linearId.id
             )
             else -> throw IllegalArgumentException("Unrecognised schema $schema")

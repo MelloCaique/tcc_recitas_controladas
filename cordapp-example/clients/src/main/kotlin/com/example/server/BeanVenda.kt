@@ -10,6 +10,7 @@ import java.time.LocalDateTime
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 data class BeanVenda(
         @JsonProperty("linearId") var linearId: UniqueIdentifier,
+        @JsonProperty("quantidadeMedVendida") var quantidadeMedVendida: Int,
         @JsonProperty("comprador") var comprador: String,
         @JsonProperty("enderecoComprador") var enderecoComprador: String,
         @JsonProperty("rg") var rg: Int,

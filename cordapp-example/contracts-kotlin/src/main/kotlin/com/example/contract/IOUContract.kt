@@ -58,10 +58,10 @@ class IOUContract : Contract {
         "Todos os participantes devem ser signatários" using (signers.containsAll(out.participants.map { it.owningKey }))
         val input = tx.inputsOfType<IOUState>().single()
         "Código da receita consumida deve ser igual da receita gerada." using (input.linearId == out.linearId)
-        "Receita já foi vendida" using (input.iouVenda == null)
+        "Total de medicamentos já foi vendida ou sua venda ultrapassa o valor total" using (out.totalMedicamentoVendido!! <= input.iouReceita.receita.quantidadeMedicamento)
         val firstIntervalDate = LocalDate.of(input.dataEmissao.year,input.dataEmissao.month, input.dataEmissao.dayOfMonth).atStartOfDay()
         val secondIntervalDate = firstIntervalDate.with(TemporalAdjusters.lastDayOfMonth()).plusDays(30)
-        "Receita está fora da data limite de validade: 30 dias" using (out.iouVenda?.venda?.data!! <= secondIntervalDate)
+        "Receita está fora da data limite de validade: 30 dias" using (out.iouVenda?.venda?.get(0)?.data!! <= secondIntervalDate)
     }
 
     /**

@@ -89,7 +89,13 @@ object FlowUpdate {
             val myIdentitie = serviceHub.myInfo.legalIdentities.first()
 
             //Participantes da receita
-            val particpantes: List<String>
+            val participantes: List<String>
+
+            //Lista de vendedores
+            val listVenda: List<Venda>
+
+            //Quantidade de medicamentos vendida
+            var quantidadeTotalVendida: Int = 0
 
             // Generate an unsigned transaction.
             val queryCriteria = QueryCriteria.LinearStateQueryCriteria(
@@ -104,7 +110,22 @@ object FlowUpdate {
                 throw FlowException(String.format("Receita não encontrada no sistema. Código: %s inválido", linearId.toString()))
             }
             val inputStateAndRef = obligations[0]
-            particpantes = obligations[0].state.data.allParticipants.plus(myIdentitie.name.organisation)
+            participantes = obligations[0].state.data.allParticipants.plus(myIdentitie.name.organisation)
+            if(obligations[0].state.data.iouVenda?.venda == null){
+                listVenda = listOf(vendaFarma)
+                quantidadeTotalVendida = vendaFarma.quantidadeMedVendida
+//                if(quantidadeTotalVendida > obligations[0].state.data.iouReceita.receita.quantidadeMedicamento){
+//                    throw FlowException(String.format("Quantidade vendida maior que a receitada. Código: %s inválido", quantidadeTotalVendida.toString()))
+//                }
+            }else {
+                listVenda = obligations[0].state.data.iouVenda?.venda!!.plus(vendaFarma)
+                for (i in 0 until listVenda.size){
+                    quantidadeTotalVendida = quantidadeTotalVendida + listVenda[i].quantidadeMedVendida
+                }
+//                if(quantidadeTotalVendida > obligations[0].state.data.iouReceita.receita.quantidadeMedicamento){
+//                    throw FlowException(String.format("Quantidade vendida ultrapassa soma de medicamento receitado. Código: %s inválido", quantidadeTotalVendida.toString()))
+//                }
+            }
             val input = inputStateAndRef.state.data
                 val iouState = IOUState(
                         input.dataEmissao,
@@ -112,12 +133,13 @@ object FlowUpdate {
                                 input.iouReceita.receita
                         ),
                         VendaIOU(
-                               vendaFarma
+                               listVenda
                         ),
-                        particpantes,
+                        quantidadeTotalVendida,
+                        participantes,
                         myIdentitie
                 )
-            val output = IOUState(input.dataEmissao,input.iouReceita,iouState.iouVenda,particpantes,myIdentitie,linearId)
+            val output = IOUState(input.dataEmissao,input.iouReceita,iouState.iouVenda,quantidadeTotalVendida,participantes,myIdentitie,linearId)
             val txCommand = Command(IOUContract.Commands.Update(), output.participants.map { it.owningKey })
             val txBuilder = TransactionBuilder(notary)
                     .addInputState(inputStateAndRef.referenced().stateAndRef)

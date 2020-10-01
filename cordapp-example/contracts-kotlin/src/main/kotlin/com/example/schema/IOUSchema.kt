@@ -1,5 +1,6 @@
 package com.example.schema
 
+import com.example.iou.Venda
 import net.corda.core.schemas.MappedSchema
 import net.corda.core.schemas.PersistentState
 import java.time.LocalDateTime
@@ -56,6 +57,9 @@ object IOUSchemaV1 : MappedSchema(
             @Column(name = "posologia") //Dosagem do medicamenento
             var posologia: String,
 
+            @Column(name = "quantidadeMedVendida")
+            var quantidadeMedVendida: Int? = null,
+
             @Column(name = "comprador")
             var comprador: String? = null,
 
@@ -77,6 +81,9 @@ object IOUSchemaV1 : MappedSchema(
             @Column(name = "data")
             var data: LocalDateTime? = null,
 
+            @Column(name = "totalMedicamentoVendido")
+            var totalMedicamentoVendido: Int? = null,
+
             @Column(name = "linear_id")
             var linearId: UUID
 
@@ -95,6 +102,7 @@ object IOUSchemaV1 : MappedSchema(
                 "",
                 0,
                 "",
+                0,
                 "",
                 "",
                 0,
@@ -102,6 +110,7 @@ object IOUSchemaV1 : MappedSchema(
                 "",
                 0,
                 LocalDateTime.now(),
+                0,
                 UUID.randomUUID())
     }
 }

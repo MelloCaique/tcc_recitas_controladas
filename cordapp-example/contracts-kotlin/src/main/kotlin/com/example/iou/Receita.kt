@@ -1,11 +1,8 @@
 package com.example.iou
 
-import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.annotation.JsonProperty
-import net.corda.core.identity.Party
+
 import net.corda.core.serialization.CordaSerializable
-import java.time.LocalDateTime
-import javax.print.attribute.standard.DateTimeAtCreation
+
 
 @CordaSerializable
 data class Receita(

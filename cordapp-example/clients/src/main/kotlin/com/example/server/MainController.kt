@@ -76,8 +76,10 @@ class MainController(rpc: NodeRPCConnection) {
                 Vault.StateStatus.UNCONSUMED,
                 null)).states
         if(obligations.isNotEmpty()){
-            if(obligations[0].state.data.linearId == request.linearId &&
-                    obligations[0].state.data.iouVenda == null){
+            if(obligations[0].state.data.linearId == request.linearId && ((obligations[0].state.data.iouVenda == null
+                    && obligations[0].state.data.totalMedicamentoVendido == null) || ((obligations[0].state.data.iouVenda != null
+                            && obligations[0].state.data.totalMedicamentoVendido != null)
+                            && obligations[0].state.data.totalMedicamentoVendido!! < obligations[0].state.data.iouReceita.receita.quantidadeMedicamento))){
                 val firstIntervalDate = LocalDate.of(
                         obligations[0].state.data.dataEmissao.year,
                         obligations[0].state.data.dataEmissao.month,
@@ -89,7 +91,8 @@ class MainController(rpc: NodeRPCConnection) {
                     return ResponseEntity.badRequest().body("Receita não está disponível para venda: " +
                             "Código da Validade da receita expirada")
                 }
-            }else{
+            }
+            else{
                 return ResponseEntity.badRequest().body("Receita não está disponível para venda: " +
                         "Receita já foi vendida")
             }
@@ -147,6 +150,7 @@ class MainController(rpc: NodeRPCConnection) {
                             request.linearId.id
                             ),
                     Venda(
+                            request.quantidadeMedVendida,
                             request.comprador,
                             request.enderecoComprador,
                             request.rg,
