@@ -29,7 +29,7 @@ val SERVICE_NAMES = listOf("Notary", "Network Map Service")
 /**
  *  A Spring Boot Server API controller for interacting with the node via RPC.
  */
-
+@CrossOrigin
 @RestController
 @RequestMapping("/api/example/") // The paths for GET and POST requests are relative to this base path.
 class MainController(rpc: NodeRPCConnection) {
@@ -44,6 +44,7 @@ class MainController(rpc: NodeRPCConnection) {
     /**
      * Returns the node's name.
      */
+    @CrossOrigin
     @GetMapping(value = [ "me" ], produces = [ APPLICATION_JSON_VALUE ])
     fun whoami() = mapOf("me" to myLegalName)
 
@@ -51,6 +52,7 @@ class MainController(rpc: NodeRPCConnection) {
      * Returns all parties registered with the network map service. These names can be used to look up identities using
      * the identity service.
      */
+    @CrossOrigin
     @GetMapping(value = [ "peers" ], produces = [ APPLICATION_JSON_VALUE ])
     fun getPeers(): Map<String, List<CordaX500Name>> {
         val nodeInfo = proxy.networkMapSnapshot()
@@ -63,11 +65,12 @@ class MainController(rpc: NodeRPCConnection) {
     /**
      * Displays all IOU states that exist in the node's vault.
      */
+    @CrossOrigin
     @GetMapping(value = [ "receitas" ], produces = [ APPLICATION_JSON_VALUE ])
     fun getIOUs() : ResponseEntity<List<StateAndRef<IOUState>>> {
         return ResponseEntity.ok(proxy.vaultQueryBy<IOUState>().states)
     }
-
+    @CrossOrigin
     @PostMapping(value = [ "check-receita" ], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun CheckLinearId(@RequestBody request: BeanCheck): ResponseEntity<String> {
         val obligations = proxy.vaultQueryBy<IOUState>(QueryCriteria.LinearStateQueryCriteria(
@@ -113,7 +116,7 @@ class MainController(rpc: NodeRPCConnection) {
      *
      * The flow is invoked asynchronously. It returns a future when the flow's call() method returns.
      */
-
+    @CrossOrigin
     @PostMapping(value = [ "create-receita" ], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun createIOU(@RequestBody request: BeanReceita): ResponseEntity<String> {
 
@@ -139,6 +142,7 @@ class MainController(rpc: NodeRPCConnection) {
         }
     }
 
+    @CrossOrigin
     @PostMapping(value = [ "venda-receita" ], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun UpdateIOU(@RequestBody request: BeanVenda): ResponseEntity<String> {
 
@@ -169,6 +173,7 @@ class MainController(rpc: NodeRPCConnection) {
     /**
      * Displays all IOU states that only this node has been involved in.
      */
+    @CrossOrigin
     @GetMapping(value = [ "my-receitas" ], produces = [ APPLICATION_JSON_VALUE ])
     fun getMyIOUs(): ResponseEntity<List<StateAndRef<IOUState>>>  {
         val myious = proxy.vaultQueryBy<IOUState>().states.filter { it.state.data.remetente.equals(proxy.nodeInfo().legalIdentities.first()) }
