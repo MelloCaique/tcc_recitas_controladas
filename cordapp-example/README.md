@@ -60,6 +60,8 @@ gradlew.bat runXServer
 
 -posologia: String
 
+-quantidadeMedVendida: Int
+
 -comprador: String
 
 -enderecoComprador: String
@@ -82,7 +84,7 @@ flow start com.example.flow.FlowCreate$Initiator receita:{numeroReceita: 2, nome
 
 ### Teste do fluxo de venda do medicamento
 ```
-flow start com.example.flow.FlowUpdate$InitiatorUpdate linearId: "3bc1e864-4628-4b0f-a938-15650c990cf7", vendaFarma:{comprador: "fernanda", enderecoComprador: "rua", rg: 1, telefone: 1, nomeVendedor: "eu", cnpj: 1}
+flow start com.example.flow.FlowUpdate$InitiatorUpdate linearId: "3bc1e864-4628-4b0f-a938-15650c990cf7", vendaFarma:{quantidadeMedVendida: 30, comprador: "fernanda", enderecoComprador: "rua", rg: 1, telefone: 1, nomeVendedor: "eu", cnpj: 1}
 ```
 
 ### Teste de consulta de registro das ocorrências
