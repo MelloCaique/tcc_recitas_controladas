@@ -35,6 +35,10 @@ call workflows-kotlin\build\nodes\runnodes.bat
 gradlew.bat runXServer
 ```
 
+- ConsultorioA: localhost:50005
+- FarmaciaA: localhost:50006
+- FarmaciaB: localhost:50007
+
 ### Campos da receita B2 e seus tipos
 
 ```
