@@ -13,8 +13,8 @@ data class BeanVenda(
         @JsonProperty("quantidadeMedVendida") var quantidadeMedVendida: Int,
         @JsonProperty("comprador") var comprador: String,
         @JsonProperty("enderecoComprador") var enderecoComprador: String,
-        @JsonProperty("rg") var rg: Int,
-        @JsonProperty("telefone") var telefone: Int,
+        @JsonProperty("rg") var rg: Long,
+        @JsonProperty("telefone") var telefone: Long,
         @JsonProperty("nomeVendedor") var nomeVendedor: String,
-        @JsonProperty("cnpj") var cnpj: Int
+        @JsonProperty("cnpj") var cnpj: Long
 )

@@ -8,11 +8,11 @@ import net.corda.core.serialization.CordaSerializable
 @CordaSerializable
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 data class BeanReceita(
-        @JsonProperty("numeroReceita") var numeroReceita: Int,
+        @JsonProperty("numeroReceita") var numeroReceita: Long,
         @JsonProperty("nomePaciente") var nomePaciente: String,
         @JsonProperty("enderecoPaciente") var enderecoPaciente: String,
         @JsonProperty("nomeMedico") var nomeMedico: String,
-        @JsonProperty("crmMedico") var crmMedico: Int,
+        @JsonProperty("crmMedico") var crmMedico: Long,
         @JsonProperty("nomeMedicamento") var nomeMedicamento: String,
         @JsonProperty("quantidadeMedicamento") var quantidadeMedicamento: Int,
         @JsonProperty("formulaMedicamento") var formulaMedicamento: String,

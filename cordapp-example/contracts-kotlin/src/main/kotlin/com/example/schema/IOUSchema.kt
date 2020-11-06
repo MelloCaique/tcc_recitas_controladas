@@ -28,7 +28,7 @@ object IOUSchemaV1 : MappedSchema(
             var dataEmissao: LocalDateTime,
 
             @Column(name = "numeroReceita") //Número de indentificação da receita
-            var numeroReceita: Int,
+            var numeroReceita: Long,
 
             @Column(name = "nomePaciente") //Nome do paciente
             var nomePaciente: String,
@@ -40,7 +40,7 @@ object IOUSchemaV1 : MappedSchema(
             var nomeMedico: String,
 
             @Column(name = "crmMedico") //CRM do médico
-            var crmMedico: Int,
+            var crmMedico: Long,
 
             @Column(name = "nomeMedicamento") //Nome do medicamento
             var nomeMedicamento: String,
@@ -67,16 +67,16 @@ object IOUSchemaV1 : MappedSchema(
             var endereco: String? = null,
 
             @Column(name = "rg")
-            var rg: Int? = null,
+            var rg: Long? = null,
 
             @Column(name = "telefone")
-            var telefone: Int? = null,
+            var telefone: Long? = null,
 
             @Column(name = "nome_vendedor")
             var nome_vendedor: String? = null,
 
             @Column(name = "cnpj")
-            var cnpj: Int? = null,
+            var cnpj: Long? = null,
 
             @Column(name = "data")
             var data: LocalDateTime? = null,

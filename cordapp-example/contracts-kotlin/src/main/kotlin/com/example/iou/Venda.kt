@@ -9,9 +9,9 @@ data class Venda(
         val quantidadeMedVendida: Int,
         val comprador: String,
         val enderecoComprador: String,
-        val rg: Int,
-        val telefone: Int,
+        val rg: Long,
+        val telefone: Long,
         val nomeVendedor: String,
-        val cnpj: Int,
+        val cnpj: Long,
         val data: LocalDateTime = LocalDateTime.now()
 )
