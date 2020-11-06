@@ -89,7 +89,9 @@ class MainController(rpc: NodeRPCConnection) {
                         obligations[0].state.data.dataEmissao.dayOfMonth).atStartOfDay()
                 val secondIntervalDate = firstIntervalDate.with(TemporalAdjusters.lastDayOfMonth()).plusDays(30)
                 if(LocalDateTime.now() <= secondIntervalDate){
-                    return ResponseEntity.ok("Receita está disponível para venda")
+                    return ResponseEntity.ok("Receita está disponível para venda."+
+                            "Quantidade disponível para venda: ${obligations[0].state.data.iouReceita.receita.quantidadeMedicamento - 
+                                    (obligations[0].state.data.totalMedicamentoVendido ?: 0)}")
                 }else{
                     return ResponseEntity.badRequest().body("Receita não está disponível para venda: " +
                             "Código da Validade da receita expirada")
@@ -97,7 +99,7 @@ class MainController(rpc: NodeRPCConnection) {
             }
             else{
                 return ResponseEntity.badRequest().body("Receita não está disponível para venda: " +
-                        "Receita já foi vendida")
+                        "Receita já foi vendida completamente")
             }
         }else{
             return ResponseEntity.badRequest().body("Receita não está disponível para venda: " +
@@ -176,7 +178,8 @@ class MainController(rpc: NodeRPCConnection) {
     @CrossOrigin
     @GetMapping(value = [ "my-receitas" ], produces = [ APPLICATION_JSON_VALUE ])
     fun getMyIOUs(): ResponseEntity<List<StateAndRef<IOUState>>>  {
-        val myious = proxy.vaultQueryBy<IOUState>().states.filter { it.state.data.remetente.equals(proxy.nodeInfo().legalIdentities.first()) }
+        val myious = proxy.vaultQueryBy<IOUState>().states.filter {
+            it.state.data.allParticipants.contains(proxy.nodeInfo().legalIdentities.first().name.organisation) }
         return ResponseEntity.ok(myious)
     }
 
