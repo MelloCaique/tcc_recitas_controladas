@@ -93,16 +93,16 @@ class MainController(rpc: NodeRPCConnection) {
                             "Quantidade disponível para venda: ${obligations[0].state.data.iouReceita.receita.quantidadeMedicamento - 
                                     (obligations[0].state.data.totalMedicamentoVendido ?: 0)}")
                 }else{
-                    return ResponseEntity.badRequest().body("Receita não está disponível para venda: " +
+                    return ResponseEntity.badRequest().body("Erro: Receita não está disponível para venda: " +
                             "Código da Validade da receita expirada")
                 }
             }
             else{
-                return ResponseEntity.badRequest().body("Receita não está disponível para venda: " +
+                return ResponseEntity.badRequest().body("Erro: Receita não está disponível para venda: " +
                         "Receita já foi vendida completamente")
             }
         }else{
-            return ResponseEntity.badRequest().body("Receita não está disponível para venda: " +
+            return ResponseEntity.badRequest().body("Erro: Receita não está disponível para venda: " +
                     "Código da receita inválido")
         }
     }
