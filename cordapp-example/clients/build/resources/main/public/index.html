@@ -1,131 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Example CorDapp</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
-          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-            crossorigin="anonymous"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.0-rc.1/angular.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.2.0/ui-bootstrap-tpls.min.js"></script>
-    <script src="js/angular-module.js"></script>
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="A new Flutter application.">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="web_interface">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>web_interface</title>
+  <link rel="manifest" href="manifest.json">
 </head>
-<body ng-app="demoAppModule" ng-controller="DemoAppController as demoApp">
-<nav class="navbar navbar-default">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="#">{{demoApp.thisNode}}</a>
-        </div>
-        <button ng-click="demoApp.openModal()" type="button" class="btn btn-primary navbar-btn changeColor">Registrar Ocorrência</button>
-        <button ng-click="demoApp.reloadModal()" type="button" class="btn btn-primary navbar-btn changeColor">Atualizar Página</button>
-    </div>
-</nav>
-<script type="text/ng-template" id="demoAppModal.html">
-    <div class="modal-header">
-        <h4 class="modal-title">Registrar Ocorrência</h4>
-    </div>
-    <form>
-        <div class="modal-body">
-            <div class="form-group">
-                <label for="procedimento" class="control-label">Procedimento:</label>
-                <input type="text" ng-model="modalInstance.form.procedimento" class="form-control" id="procedimento">
-            </div>
-            <div class="form-group">
-                <label for="valorProcedimento" class="control-label">Valor Procedimento:</label>
-                <input type="text" ng-model="modalInstance.form.valorProcedimento" class="form-control" id="valorProcedimento">
-            </div>
-            <div class="form-group">
-                <label for="dataOcorrencia" class="control-label">Data Ocorrencia:</label>
-                <input type="text" ng-model="modalInstance.form.dataOcorrencia" class="form-control" id="dataOcorrencia">
-            </div>
-            <div class="form-group">
-                <label for="nome" class="control-label">Nome:</label>
-                <input type="text" ng-model="modalInstance.form.nome" class="form-control" id="nome">
-            </div>
-            <div class="form-group">
-                <label for="cpf" class="control-label">CPF:</label>
-                <input type="text" ng-model="modalInstance.form.cpf" class="form-control" id="cpf">
-            </div>
-            <div ng-show="modalInstance.formError" class="form-group">
-                <div class="alert alert-danger" role="alert">
-                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                    <span class="sr-only">Erro:</span>
-                    Preencha a Ocorrência com os parâmetros corretos.
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button ng-click="modalInstance.cancel()" type="button" class="btn btn-default">Fechar</button>
-            <button ng-click="modalInstance.create()" type="button" class="btn btn-primary">Registrar Ocorrência</button>
-        </div>
-    </form>
-</script>
-<script type="text/ng-template" id="messageContent.html">
-    <div class="modal-body" id="modal-body">
-        {{ modalInstanceTwo.message }}
-    </div>
-</script>
-
-<div class="row">
-    <div class="col-md-1"></div>
-    <div class="col-md-10">
-        <div class="panel-group" id="accordion">
-            <div class="panel">
-                <div class="panel-primary">
-                    <div class="panel-heading changeColor">
-                        <h4 class="panel-title">
-                            Ocorrências Registradas:
-                        </h4>
-                    </div>
-                </div>
-                <div>
-                    <div ng-show="!demoApp.ious.length" class="panel-body">Use o botão "Registrar Ocorrência" para enviar um registro a todos os participantes da rede.</div>
-                    <div ng-repeat="iou in demoApp.ious" class="panel panel-default">
-                        <div class="panel-body">
-                            <ul>
-                                <li>Proponente: {{iou.proponente}}</li>
-                                <li>Procedimento: {{iou.procedimento}}</li>
-                                <li>Valor Procedimento: {{iou.valorProcedimento}}</li>
-                                <li>Data Ocorrencia: {{iou.dataOcorrencia}}</li>
-                                <li>Nome: {{iou.nome}}</li>
-                                <li>CPF: {{iou.cpf}}</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="panel">
-                <div class="panel-primary">
-                    <div class="panel-heading changeColor">
-                        <h4 class="panel-title">
-                            Minhas Ocorrências:
-                        </h4>
-                    </div>
-                </div>
-                <div>
-                    <div ng-repeat="iou in demoApp.myious" class="panel panel-default">
-                        <div class="panel-body">
-                            <ul>
-                                <li>Proponente: {{iou.proponente}}</li>
-                                <li>Procedimento: {{iou.procedimento}}</li>
-                                <li>Valor Procedimento: {{iou.valorProcedimento}}</li>
-                                <li>Data Ocorrencia: {{iou.dataOcorrencia}}</li>
-                                <li>Nome: {{iou.nome}}</li>
-                                <li>CPF: {{iou.cpf}}</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-1"></div>
-</div>
-
+<body>
+  <!-- This script installs service_worker.js to provide PWA functionality to
+       application. For more information, see:
+       https://developers.google.com/web/fundamentals/primers/service-workers -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('flutter_service_worker.js?v=3444829798');
+      });
+    }
+  </script>
+  <script src="main.dart.js?v=3444829798" type="application/javascript"></script>
 </body>
 </html>
